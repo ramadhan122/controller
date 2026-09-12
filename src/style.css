@@ -1,0 +1,222 @@
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+  font-family: Arial, sans-serif;
+  touch-action: none;
+}
+
+button {
+  border: 0;
+  color: white;
+  font-weight: bold;
+  touch-action: none;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.controller {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at center, #252525 0%, #111 70%);
+  color: white;
+}
+
+.top {
+  height: 55px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.menu {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #242424;
+  font-size: 18px;
+}
+
+.gamepad {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 18px 15px;
+  min-height: 0;
+}
+
+.shoulders {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.shoulders button {
+  height: 48px;
+  min-width: 58px;
+  border-radius: 12px;
+  background: #292929;
+  box-shadow: inset 0 -4px #181818;
+}
+
+.shoulders .trigger {
+  height: 58px;
+}
+
+.center {
+  display: flex;
+  gap: 8px;
+}
+
+.center button {
+  min-width: 65px;
+  font-size: 10px;
+}
+
+.middle {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  min-height: 0;
+}
+
+.stick-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  opacity: .6;
+}
+
+.stick {
+  width: min(34vw, 150px);
+  height: min(34vw, 150px);
+  max-width: 150px;
+  max-height: 150px;
+  min-width: 105px;
+  min-height: 105px;
+  border-radius: 50%;
+  background: #202020;
+  border: 2px solid #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stick-knob {
+  width: 48%;
+  height: 48%;
+  border-radius: 50%;
+  background: #3a3a3a;
+  border: 2px solid #555;
+  box-shadow: 0 5px 15px #000;
+  transition: transform .04s linear;
+}
+
+.dpad {
+  position: relative;
+  width: 125px;
+  height: 125px;
+}
+
+.dpad button {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background: #292929;
+  border-radius: 8px;
+}
+
+.dpad button:nth-child(1) {
+  top: 0;
+  left: 41px;
+}
+
+.dpad button:nth-child(2) {
+  top: 41px;
+  left: 0;
+}
+
+.dpad button:nth-child(3) {
+  top: 41px;
+  right: 0;
+}
+
+.dpad button:nth-child(4) {
+  bottom: 0;
+  left: 41px;
+}
+
+.face-buttons {
+  position: relative;
+  width: 135px;
+  height: 135px;
+}
+
+.face-buttons button {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #292929;
+  box-shadow: inset 0 -4px #181818;
+}
+
+.face-buttons button:nth-child(1) {
+  top: 0;
+  left: 44px;
+}
+
+.face-buttons button:nth-child(2) {
+  top: 43px;
+  left: 0;
+}
+
+.face-buttons button:nth-child(3) {
+  top: 43px;
+  right: 0;
+}
+
+.face-buttons button:nth-child(4) {
+  bottom: 0;
+  left: 44px;
+}
+
+.pressed {
+  transform: scale(.92);
+  filter: brightness(1.5);
+}
+
+#status {
+  height: 30px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #777;
+}

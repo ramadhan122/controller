@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ZZZ Controller</string>
+    <string name="title_activity_main">ZZZ Controller</string>
+    <string name="package_name">com.ramadhan.zzzcontroller</string>
+    <string name="custom_url_scheme">com.ramadhan.zzzcontroller</string>
+</resources>
