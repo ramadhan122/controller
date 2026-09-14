@@ -39,38 +39,48 @@ public sealed class VirtualController : IDisposable
 
     public void setButton(string button, bool pressed)
     {
-        Xbox360Button? xboxButton = button.ToUpperInvariant() switch
+        switch (button.ToUpperInvariant())
         {
-            "A"     => Xbox360Button.A,
-            "B"     => Xbox360Button.B,
-            "X"     => Xbox360Button.X,
-            "Y"     => Xbox360Button.Y,
+            case "A":
+                controller.SetButtonState(Xbox360Button.A, pressed);
+                break;
 
-            "LB"    => Xbox360Button.LeftShoulder,
-            "RB"    => Xbox360Button.RightShoulder,
+            case "B":
+                controller.SetButtonState(Xbox360Button.B, pressed);
+                break;
 
-            "Back"  => Xbox360Button.Back,
-            "start" => Xbox360Button.Start,
+            case "X":
+                controller.SetButtonState(Xbox360Button.X, pressed);
+                break;
 
-            "LS"    => Xbox360Button.LeftThumb,
-            "RS"    => Xbox360Button.RightThumb,
+            case "Y":
+                controller.SetButtonState(Xbox360Button.Y, pressed);
+                break;
 
-            _ => null
-        };
+            case "LB":
+                controller.SetButtonState(Xbox360Button.LeftShoulder, pressed);
+                break;
 
-        if (xboxButton == null)
-        {
-            Console.WriteLine(
-                $"Unknown button: {button}"
-            );
+            case "RB":
+                controller.SetButtonState(Xbox360Button.RightShoulder, pressed);
+                break;
 
-            return;
+            case "BACK":
+                controller.SetButtonState(Xbox360Button.Back, pressed);
+                break;
+
+            case "START":
+                controller.SetButtonState(Xbox360Button.Start, pressed);
+                break;
+
+            case "LS":
+                controller.SetButtonState(Xbox360Button.LeftThumb, pressed);
+                break;
+
+            case "RS":
+                controller.SetButtonState(Xbox360Button.RightThumb, pressed);
+                break;
         }
-
-        controller.SetButtonState(
-            xboxButton.Value,
-            pressed
-        );
     }
 
     //===========================================

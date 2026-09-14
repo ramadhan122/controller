@@ -20,6 +20,7 @@ const UsbController = registerPlugin<UsbControllerPlugin>('UsbController')
 const app = document.querySelector<HTMLDivElement>('#app')!
 
 app.innerHTML = `
+console.log('ZZZ CONTROLLER VERSION: ROTATION TEST 2')
   <main class="controller">
     <div class="top">
       <button class="menu">☰</button>
@@ -152,6 +153,10 @@ function setupStick(id: string) {
   let active = false
 
   const move = (x: number, y: number) => {
+
+    const raw = `x:${Math.round(x)} y:${Math.round(y)} W:${window.innerWidth} H:${window.innerHeight} O:${screen.orientation?.type}`
+
+    status.textContent = raw
     const rect = stick.getBoundingClientRect()
 
     const centerX = rect.width / 2
@@ -171,12 +176,23 @@ function setupStick(id: string) {
 
     knob.style.transform = `translate(${dx}px, ${dy}px)`
 
-    const normalizedX = Math.round((dx / max) * 32767)
-    const normalizedY = Math.round((-dy / max) * 32767)
+    // Koordinat normal dari layar
+    const androidX = dx / max
+    const androidY = -dy / max
 
+    const normalizedX = Math.round(-androidY * 32767)
+    const normalizedY = Math.round(androidX * 32767)
 
+    send(
+      `S|${id === 'left-stick' ? 'LS' : 'RS'}|${normalizedX}|${normalizedY}`
+    )
 
-    send(`S|${id === 'left-stick' ? 'LS' : 'RS'}|${normalizedX}|${normalizedY}`)
+    console.log(
+      'SEND STICK:',
+      id,
+      'X=', normalizedX,
+      'Y=', normalizedY
+    )
   }
 
   stick.addEventListener('pointerdown', e => {

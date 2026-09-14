@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -514,7 +515,8 @@ class Program
 
         ReadLoop(
             aoaInterfaceHandle,
-            bulkIn
+            bulkIn,
+            VirtualController
         );
 
         WinUsb_Free(aoaInterfaceHandle);
@@ -672,9 +674,14 @@ class Program
     // READ DATA
     // ============================================================
 
+    static bool dpadUp;
+    static bool dpadDown;
+    static bool dpadLeft;
+    static bool dpadRight;
     static void ReadLoop(
         nint interfaceHandle,
-        byte bulkIn)
+        byte bulkIn,
+        VirtualController virtualController)
     {
         byte[] buffer = new byte[512];
 
@@ -712,7 +719,200 @@ class Program
             Console.WriteLine(
                 $"RECV: {data.Replace("\r", "\\r").Replace("\n", "\\n")}"
             );
+
+            //=====================================================
+            // Satu transfer USB bisa berisi beberapa command
+            // ====================================================
+
+            string[] lines = data.Split(
+                new[] { "\r\n", "\n", "\n"},
+                StringSplitOptions.RemoveEmptyEntries
+            );
+
+            foreach (string rawLine in lines)
+            {
+                string line = rawLine.Trim();
+
+                if (line.Length == 0)
+                    continue;
+
+                ProcessInput(
+                    line, virtualController
+                );
+            }
         }
+    }
+
+   static void ProcessInput(
+        string line,
+        VirtualController virtualController)
+    {
+        string[] parts = line.Split('|');
+
+        // ========================================================
+        // BUTTON
+        // Format:
+        // B|A|down
+        // B|A|up
+        // ========================================================
+
+        if (parts.Length == 3 &&
+            parts[0].Equals("B", StringComparison.OrdinalIgnoreCase))
+        {
+            string button = parts[1].Trim().ToUpperInvariant();
+            string action = parts[2].Trim().ToLowerInvariant();
+
+            bool pressed;
+
+            if (action == "down")
+            {
+                pressed = true;
+            }
+            else if (action == "up")
+            {
+                pressed = false;
+            }
+            else
+            {
+                return;
+            }
+
+            // ====================================================
+            // D-PAD
+            // ====================================================
+
+            switch (button)
+            {
+                case "UP":
+                    dpadUp = pressed;
+                    UpdateDPad(virtualController);
+                    return;
+
+                case "DOWN":
+                    dpadDown = pressed;
+                    UpdateDPad(virtualController);
+                    return;
+
+                case "LEFT":
+                    dpadLeft = pressed;
+                    UpdateDPad(virtualController);
+                    return;
+
+                case "RIGHT":
+                    dpadRight = pressed;
+                    UpdateDPad(virtualController);
+                    return;
+            }
+
+            // ====================================================
+            // XBOX BUTTON
+            // ====================================================
+
+            switch (button)
+            {
+                case "A":
+                case "B":
+                case "X":
+                case "Y":
+                case "LB":
+                case "RB":
+                case "BACK":
+                case "START":
+                case "LS":
+                case "RS":
+
+                    virtualController.setButton(
+                        button,
+                        pressed
+                    );
+
+                    return;
+            }
+
+            return;
+        }
+
+        // ========================================================
+        // STICK
+        // Format:
+        // S|LS|x|y
+        // S|RS|x|y
+        // ========================================================
+
+        if (parts.Length == 4 &&
+            parts[0].Equals("S", StringComparison.OrdinalIgnoreCase))
+        {
+            string stick = parts[1].Trim().ToUpperInvariant();
+
+            if (!short.TryParse(parts[2], out short x))
+                return;
+
+            if (!short.TryParse(parts[3], out short y))
+                return;
+
+            switch (stick)
+            {
+                case "LS":
+                    virtualController.SetLeftStick(
+                        x,
+                        y
+                    );
+                    break;
+
+                case "RS":
+                    virtualController.SetRightStick(
+                        x,
+                        y
+                    );
+                    break;
+            }
+
+            return;
+        }
+
+        // ========================================================
+        // TRIGGER
+        // Format:
+        // T|LT|value
+        // T|RT|value
+        // ========================================================
+
+        if (parts.Length == 3 &&
+            parts[0].Equals("T", StringComparison.OrdinalIgnoreCase))
+        {
+            string trigger = parts[1].Trim().ToUpperInvariant();
+
+            if (!byte.TryParse(
+                parts[2].Trim(),
+                out byte value))
+            {
+                return;
+            }
+
+            switch (trigger)
+            {
+                case "LT":
+                    virtualController.SetLeftTrigger(value);
+                    break;
+
+                case "RT":
+                    virtualController.SetRightTrigger(value);
+                    break;
+            }
+
+            return;
+        }
+    }
+
+    static void UpdateDPad(
+        VirtualController virtualController)
+    {
+        virtualController.SetDPad(
+            dpadUp,
+            dpadDown,
+            dpadLeft,
+            dpadRight
+        );
     }
 
     // ============================================================
