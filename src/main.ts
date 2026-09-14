@@ -1,4 +1,21 @@
 import './style.css'
+import { registerPlugin } from '@capacitor/core'
+
+interface UsbControllerPlugin {
+  connect(): Promise<{
+    connected: boolean
+    manufacturer: string
+    model: string
+  }>
+
+  send(options: {
+    data: string
+  }): Promise<void>
+
+  disconnect(): Promise<void>
+}
+
+const UsbController = registerPlugin<UsbControllerPlugin>('UsbController')
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
@@ -58,34 +75,75 @@ app.innerHTML = `
       </div>
     </section>
 
-    <div id="status">USB DISCONNECTED</div>
+    <div id="status">USB CONNECTING...</div>
   </main>
 `
 
-function sendButton(button: string, state: 'down' | 'up') {
-  console.log(button, state)
+const status = document.querySelector<HTMLDivElement>('#status')!
+
+async function send(data: string) {
+  console.log('TRY SEND:', data)
+
+  try {
+    await UsbController.send({ data: data + '\n' })
+    console.log('USB SEND SUCCESS:', data)
+  } catch (error) {
+    console.error('USB SEND ERROR:', error)
+  }
 }
 
-document.querySelectorAll<HTMLButtonElement>('[data-button]').forEach(button => {
-  const name = button.dataset.button!
+async function connectUSB() {
+  try {
+    const result = await UsbController.connect()
 
-  button.addEventListener('pointerdown', e => {
-    e.preventDefault()
-    button.classList.add('pressed')
-    sendButton(name, 'down')
-  })
+    if (result.connected) {
+      status.textContent = 'USB CONNECTED'
+      console.log('USB CONNECTED:', result)
+    }
+  } catch (error) {
+    status.textContent = 'USB DISCONNECTED'
+    console.error('USB CONNECT ERROR:', error)
+  }
+}
 
-  button.addEventListener('pointerup', e => {
-    e.preventDefault()
-    button.classList.remove('pressed')
-    sendButton(name, 'up')
-  })
+function sendButton(button: string, state: 'down' | 'up') {
+  send(`B|${button}|${state}`)
+}
 
-  button.addEventListener('pointercancel', () => {
-    button.classList.remove('pressed')
-    sendButton(name, 'up')
+document
+  .querySelectorAll<HTMLButtonElement>('[data-button]')
+  .forEach(button => {
+    const name = button.dataset.button!
+
+    button.addEventListener('pointerdown', e => {
+      e.preventDefault()
+
+      button.classList.add('pressed')
+
+      sendButton(name, 'down')
+    })
+
+    button.addEventListener('pointerup', e => {
+      e.preventDefault()
+
+      button.classList.remove('pressed')
+
+      sendButton(name, 'up')
+    })
+
+    button.addEventListener('pointercancel', () => {
+      button.classList.remove('pressed')
+
+      sendButton(name, 'up')
+    })
+
+    button.addEventListener('pointerleave', () => {
+      if (button.classList.contains('pressed')) {
+        button.classList.remove('pressed')
+        sendButton(name, 'up')
+      }
+    })
   })
-})
 
 function setupStick(id: string) {
   const stick = document.getElementById(id)!
@@ -95,6 +153,7 @@ function setupStick(id: string) {
 
   const move = (x: number, y: number) => {
     const rect = stick.getBoundingClientRect()
+
     const centerX = rect.width / 2
     const centerY = rect.height / 2
 
@@ -102,6 +161,7 @@ function setupStick(id: string) {
     let dy = y - (rect.top + centerY)
 
     const max = rect.width * 0.32
+
     const distance = Math.sqrt(dx * dx + dy * dy)
 
     if (distance > max) {
@@ -114,23 +174,33 @@ function setupStick(id: string) {
     const normalizedX = Math.round((dx / max) * 32767)
     const normalizedY = Math.round((-dy / max) * 32767)
 
-    console.log(id, normalizedX, normalizedY)
+
+
+    send(`S|${id === 'left-stick' ? 'LS' : 'RS'}|${normalizedX}|${normalizedY}`)
   }
 
   stick.addEventListener('pointerdown', e => {
     active = true
+
     stick.setPointerCapture(e.pointerId)
+
     move(e.clientX, e.clientY)
   })
 
   stick.addEventListener('pointermove', e => {
-    if (active) move(e.clientX, e.clientY)
+    if (active) {
+      move(e.clientX, e.clientY)
+    }
   })
 
   const release = () => {
+    if (!active) return
+
     active = false
+
     knob.style.transform = 'translate(0, 0)'
-    console.log(id, 0, 0)
+
+    send(`S|${id === 'left-stick' ? 'LS' : 'RS'}|0|0`)
   }
 
   stick.addEventListener('pointerup', release)
@@ -139,3 +209,5 @@ function setupStick(id: string) {
 
 setupStick('left-stick')
 setupStick('right-stick')
+
+connectUSB()
