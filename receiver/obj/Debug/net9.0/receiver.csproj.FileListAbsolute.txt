@@ -13,3 +13,6 @@ D:\gabut\controller\zzz-controller\receiver\obj\Debug\net9.0\refint\receiver.dll
 D:\gabut\controller\zzz-controller\receiver\obj\Debug\net9.0\receiver.pdb
 D:\gabut\controller\zzz-controller\receiver\obj\Debug\net9.0\receiver.genruntimeconfig.cache
 D:\gabut\controller\zzz-controller\receiver\obj\Debug\net9.0\ref\receiver.dll
+D:\gabut\controller\zzz-controller\receiver\bin\Debug\net9.0\Nefarius.ViGEm.Client.dll
+D:\gabut\controller\zzz-controller\receiver\obj\Debug\net9.0\receiver.csproj.AssemblyReference.cache
+D:\gabut\controller\zzz-controller\receiver\obj\Debug\net9.0\receiver.csproj.Up2Date

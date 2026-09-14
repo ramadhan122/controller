@@ -50,6 +50,8 @@ class Program
 
     static void Main()
     {
+        using var VirtualController = new VirtualController();
+        
         Console.WriteLine("ZZZ Controller - AOA Receiver");
         Console.WriteLine("=============================");
         Console.WriteLine();

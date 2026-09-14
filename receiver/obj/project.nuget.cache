@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "0lS3Ox+0N4o=",
+  "dgSpecHash": "K6xmhslAx9s=",
   "success": true,
   "projectFilePath": "D:\\gabut\\controller\\zzz-controller\\receiver\\receiver.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\LENOVO\\.nuget\\packages\\nefarius.vigem.client\\1.21.256\\nefarius.vigem.client.1.21.256.nupkg.sha512"
+  ],
   "logs": []
 }
