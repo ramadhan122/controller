@@ -261,12 +261,51 @@ button {
     font-size: 9px;
   }
 
+  /* =========================
+     XBOX LANDSCAPE LAYOUT
+     ========================= */
+
   .middle {
-    gap: 2px;
+    flex: 1;
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    grid-template-areas:
+      "leftstick face"
+      "dpad rightstick";
+
+    align-items: center;
+    justify-items: center;
+
+    min-height: 0;
+    gap: 0;
+  }
+
+  /* LEFT STICK - kiri atas */
+  .middle > .stick-area:nth-child(1) {
+    grid-area: leftstick;
+  }
+
+  /* RIGHT STICK - kanan bawah */
+  .middle > .stick-area:nth-child(2) {
+    grid-area: rightstick;
+  }
+
+  /* DPAD - kiri bawah */
+  .middle > .dpad {
+    grid-area: dpad;
+  }
+
+  /* ABXY - kanan atas */
+  .middle > .face-buttons {
+    grid-area: face;
   }
 
   .stick-area {
     gap: 3px;
+    font-size: 9px;
   }
 
   .stick {
@@ -275,6 +314,10 @@ button {
     min-width: 75px;
     min-height: 75px;
   }
+
+  /* =========================
+     DPAD
+     ========================= */
 
   .dpad {
     width: 90px;
@@ -305,6 +348,10 @@ button {
     bottom: 0;
     left: 30px;
   }
+
+  /* =========================
+     ABXY
+     ========================= */
 
   .face-buttons {
     width: 100px;
