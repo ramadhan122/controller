@@ -220,3 +220,124 @@ button {
   letter-spacing: 2px;
   color: #777;
 }
+
+@media (orientation: landscape) {
+  .top {
+    height: 38px;
+    padding: 0 14px;
+    font-size: 11px;
+  }
+
+  .menu {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .gamepad {
+    padding: 5px 14px 8px;
+  }
+
+  .shoulders {
+    gap: 5px;
+  }
+
+  .shoulders button {
+    height: 36px;
+    min-width: 50px;
+    border-radius: 9px;
+  }
+
+  .shoulders .trigger {
+    height: 42px;
+  }
+
+  .center {
+    gap: 5px;
+  }
+
+  .center button {
+    min-width: 55px;
+    font-size: 9px;
+  }
+
+  .middle {
+    gap: 2px;
+  }
+
+  .stick-area {
+    gap: 3px;
+  }
+
+  .stick {
+    width: min(24vw, 105px);
+    height: min(24vw, 105px);
+    min-width: 75px;
+    min-height: 75px;
+  }
+
+  .dpad {
+    width: 90px;
+    height: 90px;
+  }
+
+  .dpad button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .dpad button:nth-child(1) {
+    top: 0;
+    left: 30px;
+  }
+
+  .dpad button:nth-child(2) {
+    top: 30px;
+    left: 0;
+  }
+
+  .dpad button:nth-child(3) {
+    top: 30px;
+    right: 0;
+  }
+
+  .dpad button:nth-child(4) {
+    bottom: 0;
+    left: 30px;
+  }
+
+  .face-buttons {
+    width: 100px;
+    height: 100px;
+  }
+
+  .face-buttons button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .face-buttons button:nth-child(1) {
+    top: 0;
+    left: 32px;
+  }
+
+  .face-buttons button:nth-child(2) {
+    top: 32px;
+    left: 0;
+  }
+
+  .face-buttons button:nth-child(3) {
+    top: 32px;
+    right: 0;
+  }
+
+  .face-buttons button:nth-child(4) {
+    bottom: 0;
+    left: 32px;
+  }
+
+  #status {
+    height: 20px;
+    font-size: 8px;
+  }
+}

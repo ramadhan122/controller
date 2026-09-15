@@ -32,14 +32,14 @@ console.log('ZZZ CONTROLLER VERSION: ROTATION TEST 2')
 
       <div class="shoulders">
         <button data-button="LB">LB</button>
-        <button data-button="LT" class="trigger">LT</button>
+        <button class="trigger" data-trigger="LT">LT</button>
 
         <div class="center">
           <button data-button="BACK">BACK</button>
           <button data-button="START">START</button>
         </div>
 
-        <button data-button="RT" class="trigger">RT</button>
+        <button class="trigger" data-trigger="RT">RT</button>
         <button data-button="RB">RB</button>
       </div>
 
@@ -112,7 +112,7 @@ function sendButton(button: string, state: 'down' | 'up') {
 }
 
 document
-  .querySelectorAll<HTMLButtonElement>('[data-button]')
+  .querySelectorAll<HTMLButtonElement>('[data-button]:not(.trigger)')
   .forEach(button => {
     const name = button.dataset.button!
 
@@ -180,8 +180,8 @@ function setupStick(id: string) {
     const androidX = dx / max
     const androidY = -dy / max
 
-    const normalizedX = Math.round(-androidY * 32767)
-    const normalizedY = Math.round(androidX * 32767)
+    const normalizedX = Math.round(androidX * 32767)
+    const normalizedY = Math.round(androidY * 32767)
 
     send(
       `S|${id === 'left-stick' ? 'LS' : 'RS'}|${normalizedX}|${normalizedY}`
@@ -222,6 +222,58 @@ function setupStick(id: string) {
   stick.addEventListener('pointerup', release)
   stick.addEventListener('pointercancel', release)
 }
+
+function setupTrigger(button: string) {
+  const element = document.querySelector<HTMLButtonElement>(
+    `[data-trigger="${button}"]`
+  )!
+
+  let active = false
+  let startY = 0
+
+  const maxDistance = 100
+
+  element.addEventListener('pointerdown', e => {
+    e.preventDefault()
+
+    active = true
+    startY = e.clientY
+
+    element.setPointerCapture(e.pointerId)
+    element.classList.add('pressed')
+
+    send(`T|${button}|0`)
+  })
+
+  element.addEventListener('pointermove', e => {
+    if (!active) return
+
+    const distance = e.clientY - startY
+
+    const value = Math.max(
+      0,
+      Math.min(255, Math.round((distance / maxDistance) * 255))
+    )
+
+    send(`T|${button}|${value}`)
+  })
+
+  const release = () => {
+    if (!active) return
+
+    active = false
+
+    element.classList.remove('pressed')
+
+    send(`T|${button}|0`)
+  }
+
+  element.addEventListener('pointerup', release)
+  element.addEventListener('pointercancel', release)
+}
+
+setupTrigger('LT')
+setupTrigger('RT')
 
 setupStick('left-stick')
 setupStick('right-stick')
