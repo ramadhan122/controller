@@ -74,12 +74,20 @@ public sealed class VirtualController : IDisposable
                 break;
 
             case "LS":
-                controller.SetButtonState(Xbox360Button.LeftThumb, pressed);
+            case "L3":
+                controller.SetButtonState(
+                    Xbox360Button.LeftThumb,
+                    pressed
+                );
                 break;
 
             case "RS":
-                controller.SetButtonState(Xbox360Button.RightThumb, pressed);
-                break;
+            case "R3":
+                controller.SetButtonState(
+                    Xbox360Button.RightThumb, 
+                    pressed
+                );
+                break;      
         }
     }
 

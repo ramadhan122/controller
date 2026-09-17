@@ -820,6 +820,8 @@ class Program
                 case "START":
                 case "LS":
                 case "RS":
+                case "L3":
+                case "R3":
 
                     virtualController.setButton(
                         button,

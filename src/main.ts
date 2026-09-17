@@ -146,82 +146,7 @@ document
     })
   })
 
-function setupStick(id: string) {
-  const stick = document.getElementById(id)!
-  const knob = stick.querySelector<HTMLElement>('.stick-knob')!
 
-  let active = false
-
-  const move = (x: number, y: number) => {
-
-    const raw = `x:${Math.round(x)} y:${Math.round(y)} W:${window.innerWidth} H:${window.innerHeight} O:${screen.orientation?.type}`
-
-    status.textContent = raw
-    const rect = stick.getBoundingClientRect()
-
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-
-    let dx = x - (rect.left + centerX)
-    let dy = y - (rect.top + centerY)
-
-    const max = rect.width * 0.32
-
-    const distance = Math.sqrt(dx * dx + dy * dy)
-
-    if (distance > max) {
-      dx = (dx / distance) * max
-      dy = (dy / distance) * max
-    }
-
-    knob.style.transform = `translate(${dx}px, ${dy}px)`
-
-    // Koordinat normal dari layar
-    const androidX = dx / max
-    const androidY = -dy / max
-
-    const normalizedX = Math.round(androidX * 32767)
-    const normalizedY = Math.round(androidY * 32767)
-
-    send(
-      `S|${id === 'left-stick' ? 'LS' : 'RS'}|${normalizedX}|${normalizedY}`
-    )
-
-    console.log(
-      'SEND STICK:',
-      id,
-      'X=', normalizedX,
-      'Y=', normalizedY
-    )
-  }
-
-  stick.addEventListener('pointerdown', e => {
-    active = true
-
-    stick.setPointerCapture(e.pointerId)
-
-    move(e.clientX, e.clientY)
-  })
-
-  stick.addEventListener('pointermove', e => {
-    if (active) {
-      move(e.clientX, e.clientY)
-    }
-  })
-
-  const release = () => {
-    if (!active) return
-
-    active = false
-
-    knob.style.transform = 'translate(0, 0)'
-
-    send(`S|${id === 'left-stick' ? 'LS' : 'RS'}|0|0`)
-  }
-
-  stick.addEventListener('pointerup', release)
-  stick.addEventListener('pointercancel', release)
-}
 
 function setupTrigger(button: string) {
   const element = document.querySelector<HTMLButtonElement>(
@@ -270,6 +195,101 @@ function setupTrigger(button: string) {
 
   element.addEventListener('pointerup', release)
   element.addEventListener('pointercancel', release)
+}
+
+function setupStick(id: string) {
+  const stick = document.getElementById(id)!
+  const knob = stick.querySelector<HTMLElement>('.stick-knob')!
+
+  const stickName = id === 'left-stick' ? 'LS' : 'RS'
+  const clickName = id === 'left-stick' ? 'L3' : 'R3'
+
+  let active = false
+  let moved = false
+
+  const moveThreshold = 10
+
+  const move = (x: number, y: number) => {
+    const rect = stick.getBoundingClientRect()
+
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+
+    let dx = x - (rect.left + centerX)
+    let dy = y - (rect.top + centerY)
+
+    const max = rect.width * 0.32
+
+    const distance = Math.sqrt(dx * dx + dy * dy)
+
+    if (distance > moveThreshold) {
+      moved = true
+    }
+
+    if (distance > max) {
+      dx = (dx / distance) * max
+      dy = (dy / distance) * max
+    }
+
+    knob.style.transform = `translate(${dx}px, ${dy}px)`
+
+    const androidX = dx / max
+    const androidY = -dy / max
+
+    const normalizedX = Math.round(androidX * 32767)
+    const normalizedY = Math.round(androidY * 32767)
+
+    send(
+      `S|${stickName}|${normalizedX}|${normalizedY}`
+    )
+
+    console.log(
+      'SEND STICK:',
+      stickName,
+      'X=', normalizedX,
+      'Y=', normalizedY
+    )
+  }
+
+  stick.addEventListener('pointerdown', e => {
+    e.preventDefault()
+
+    active = true
+    moved = false
+
+    stick.setPointerCapture(e.pointerId)
+
+    move(e.clientX, e.clientY)
+  })
+
+  stick.addEventListener('pointermove', e => {
+    if (!active) return
+
+    move(e.clientX, e.clientY)
+  })
+
+  const release = () => {
+    if (!active) return
+
+    active = false
+
+    knob.style.transform = 'translate(0, 0)'
+
+    send(`S|${stickName}|0|0`)
+
+    if (!moved) {
+      sendButton(clickName, 'down')
+
+      setTimeout(() => {
+        sendButton(clickName, 'up')
+      }, 50)
+
+      console.log('STICK CLICK:', clickName)
+    }
+  }
+
+  stick.addEventListener('pointerup', release)
+  stick.addEventListener('pointercancel', release)
 }
 
 setupTrigger('LT')
