@@ -59,44 +59,220 @@ public class UsbControllerPlugin extends Plugin {
                         "USB permission result: " + granted
                 );
 
-                if (pendingCall == null) {
-                    android.util.Log.e(
-                            "ZZZ_USB",
-                            "pendingCall NULL"
-                    );
-                    return;
-                }
-
                 if (!granted) {
-                    pendingCall.reject(
-                            "Izin USB Accessory ditolak"
-                    );
-                    pendingCall = null;
+
+                    if (pendingCall != null) {
+                        pendingCall.reject(
+                                "Izin USB Accessory ditolak"
+                        );
+                        pendingCall = null;
+                    } else {
+                        android.util.Log.e(
+                                "ZZZ_USB",
+                                "Izin USB ditolak saat auto connect"
+                        );
+                    }
+
                     return;
                 }
 
-                openAccessory(pendingCall);
-                pendingCall = null;
+                boolean opened = openAccessory();
+
+                if (!opened) {
+
+                    if (pendingCall != null) {
+                        pendingCall.reject(
+                                "Gagal membuka USB Accessory"
+                        );
+                        pendingCall = null;
+                    }
+
+                    return;
+                }
+
+                android.util.Log.d(
+                        "ZZZ_USB",
+                        "USB Accessory berhasil terhubung"
+                );
+
+                if (pendingCall != null) {
+
+                    JSObject result = new JSObject();
+
+                    result.put("connected", true);
+                    result.put(
+                            "manufacturer",
+                            accessory.getManufacturer()
+                    );
+                    result.put(
+                            "model",
+                            accessory.getModel()
+                    );
+
+                    pendingCall.resolve(result);
+                    pendingCall = null;
+                }
             }
         };
 
     @Override
     public void load() {
+
         usbManager = (UsbManager) getContext()
                 .getSystemService(Context.USB_SERVICE);
 
-        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        IntentFilter filter =
+                new IntentFilter(ACTION_USB_PERMISSION);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
             getContext().registerReceiver(
                     usbPermissionReceiver,
                     filter,
                     Context.RECEIVER_NOT_EXPORTED
             );
+
         } else {
+
             getContext().registerReceiver(
                     usbPermissionReceiver,
                     filter
+            );
+        }
+
+        // Coba konek otomatis saat aplikasi dibuka
+        getActivity().runOnUiThread(() -> {
+
+            try {
+
+                UsbAccessory[] accessories =
+                        usbManager.getAccessoryList();
+
+                if (accessories != null &&
+                        accessories.length > 0) {
+
+                    android.util.Log.d(
+                            "ZZZ_USB",
+                            "Accessory terdeteksi saat aplikasi dibuka"
+                    );
+
+                    autoConnect();
+
+                } else {
+
+                    android.util.Log.d(
+                            "ZZZ_USB",
+                            "Belum ada Accessory saat aplikasi dibuka"
+                    );
+                }
+
+            } catch (Exception e) {
+
+                android.util.Log.e(
+                        "ZZZ_USB",
+                        "AUTO CONNECT ERROR",
+                        e
+                );
+            }
+        });
+    }
+
+    private void autoConnect() {
+
+        try {
+
+            UsbAccessory[] accessories =
+                    usbManager.getAccessoryList();
+
+            if (accessories == null ||
+                    accessories.length == 0) {
+
+                android.util.Log.d(
+                        "ZZZ_USB",
+                        "Auto connect: Accessory tidak ditemukan"
+                );
+
+                return;
+            }
+
+            accessory = accessories[0];
+
+            android.util.Log.d(
+                    "ZZZ_USB",
+                    "Auto connect: Accessory ditemukan: " +
+                    accessory.getManufacturer() +
+                    " / " +
+                    accessory.getModel()
+            );
+
+            if (usbManager.hasPermission(accessory)) {
+
+                android.util.Log.d(
+                        "ZZZ_USB",
+                        "Auto connect: permission sudah ada"
+                );
+
+                boolean opened = openAccessory();
+
+                if (opened) {
+
+                    android.util.Log.d(
+                            "ZZZ_USB",
+                            "Auto connect: USB berhasil dibuka"
+                    );
+
+                } else {
+
+                    android.util.Log.e(
+                            "ZZZ_USB",
+                            "Auto connect: gagal membuka USB"
+                    );
+                }
+
+                return;
+            }
+
+            android.util.Log.d(
+                    "ZZZ_USB",
+                    "Auto connect: permission belum ada"
+            );
+
+            Intent permissionIntent =
+                    new Intent(ACTION_USB_PERMISSION);
+
+            permissionIntent.setPackage(
+                    getContext().getPackageName()
+            );
+
+            int flags =
+                    PendingIntent.FLAG_UPDATE_CURRENT;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+
+            PendingIntent pendingIntent =
+                    PendingIntent.getBroadcast(
+                            getContext(),
+                            0,
+                            permissionIntent,
+                            flags
+                    );
+
+            // Tidak menggunakan pendingCall karena ini auto connect
+            pendingCall = null;
+
+            usbManager.requestPermission(
+                    accessory,
+                    pendingIntent
+            );
+
+        } catch (Exception e) {
+
+            android.util.Log.e(
+                    "ZZZ_USB",
+                    "AUTO CONNECT ERROR",
+                    e
             );
         }
     }
@@ -105,15 +281,22 @@ public class UsbControllerPlugin extends Plugin {
     public void connect(PluginCall call) {
 
         try {
-            UsbAccessory[] accessories = usbManager.getAccessoryList();
 
-            if (accessories == null || accessories.length == 0) {
+            UsbAccessory[] accessories =
+                    usbManager.getAccessoryList();
+
+            if (accessories == null ||
+                    accessories.length == 0) {
+
                 android.util.Log.e(
                         "ZZZ_USB",
                         "USB Accessory tidak ditemukan"
                 );
 
-                call.reject("USB Accessory tidak ditemukan");
+                call.reject(
+                        "USB Accessory tidak ditemukan"
+                );
+
                 return;
             }
 
@@ -134,7 +317,29 @@ public class UsbControllerPlugin extends Plugin {
                         "USB permission SUDAH ada"
                 );
 
-                openAccessory(call);
+                if (openAccessory()) {
+
+                    JSObject result = new JSObject();
+
+                    result.put("connected", true);
+                    result.put(
+                            "manufacturer",
+                            accessory.getManufacturer()
+                    );
+                    result.put(
+                            "model",
+                            accessory.getModel()
+                    );
+
+                    call.resolve(result);
+
+                } else {
+
+                    call.reject(
+                            "Gagal membuka USB Accessory"
+                    );
+                }
+
                 return;
             }
 
@@ -145,23 +350,27 @@ public class UsbControllerPlugin extends Plugin {
 
             pendingCall = call;
 
-            Intent permissionIntent = new Intent(ACTION_USB_PERMISSION);
+            Intent permissionIntent =
+                    new Intent(ACTION_USB_PERMISSION);
+
             permissionIntent.setPackage(
                     getContext().getPackageName()
             );
 
-            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            int flags =
+                    PendingIntent.FLAG_UPDATE_CURRENT;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 flags |= PendingIntent.FLAG_IMMUTABLE;
             }
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    getContext(),
-                    0,
-                    permissionIntent,
-                    flags
-            );
+            PendingIntent pendingIntent =
+                    PendingIntent.getBroadcast(
+                            getContext(),
+                            0,
+                            permissionIntent,
+                            flags
+                    );
 
             android.util.Log.d(
                     "ZZZ_USB",
@@ -188,7 +397,7 @@ public class UsbControllerPlugin extends Plugin {
         }
     }
 
-    private void openAccessory(PluginCall call) {
+    private boolean openAccessory() {
 
         android.util.Log.d(
                 "ZZZ_USB",
@@ -209,13 +418,13 @@ public class UsbControllerPlugin extends Plugin {
                     usbManager.openAccessory(accessory);
 
             if (fd == null) {
+
                 android.util.Log.e(
                         "ZZZ_USB",
                         "openAccessory() mengembalikan NULL"
                 );
 
-                call.reject("Gagal membuka USB Accessory");
-                return;
+                return false;
             }
 
             android.util.Log.d(
@@ -233,19 +442,7 @@ public class UsbControllerPlugin extends Plugin {
                     fd.getFileDescriptor()
             );
 
-            JSObject result = new JSObject();
-
-            result.put("connected", true);
-            result.put(
-                    "manufacturer",
-                    accessory.getManufacturer()
-            );
-            result.put(
-                    "model",
-                    accessory.getModel()
-            );
-
-            call.resolve(result);
+            return true;
 
         } catch (SecurityException e) {
 
@@ -255,10 +452,7 @@ public class UsbControllerPlugin extends Plugin {
                     e
             );
 
-            call.reject(
-                    "Permission USB ditolak: " +
-                    e.getMessage()
-            );
+            return false;
 
         } catch (Exception e) {
 
@@ -268,10 +462,7 @@ public class UsbControllerPlugin extends Plugin {
                     e
             );
 
-            call.reject(
-                    "Gagal membuka USB Accessory: " +
-                    e.getMessage()
-            );
+            return false;
         }
     }
 
@@ -279,14 +470,23 @@ public class UsbControllerPlugin extends Plugin {
     public void send(PluginCall call) {
 
         if (outputStream == null) {
-            call.reject("USB belum terhubung");
+
+            call.reject(
+                    "USB belum terhubung"
+            );
+
             return;
         }
 
-        String data = call.getString("data");
+        String data =
+                call.getString("data");
 
         if (data == null) {
-            call.reject("Data kosong");
+
+            call.reject(
+                    "Data kosong"
+            );
+
             return;
         }
 
@@ -313,6 +513,7 @@ public class UsbControllerPlugin extends Plugin {
     public void disconnect(PluginCall call) {
 
         try {
+
             if (inputStream != null) {
                 inputStream.close();
             }
@@ -333,6 +534,7 @@ public class UsbControllerPlugin extends Plugin {
             call.resolve();
 
         } catch (Exception e) {
+
             call.reject(
                     "Gagal disconnect: " +
                     e.getMessage()
@@ -344,9 +546,11 @@ public class UsbControllerPlugin extends Plugin {
     protected void handleOnDestroy() {
 
         try {
+
             getContext().unregisterReceiver(
                     usbPermissionReceiver
             );
+
         } catch (Exception ignored) {
         }
 

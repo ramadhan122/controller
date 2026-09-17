@@ -29,7 +29,6 @@ class Program
     // ============================================================
 
     const uint FILE_FLAG_OVERLAPPED = 0x40000000;
-
     const uint DIGCF_PRESENT = 0x00000002;
     const uint DIGCF_DEVICEINTERFACE = 0x00000010;
 
@@ -1197,8 +1196,10 @@ class Program
 
     [DllImport(
         "winusb.dll",
+        EntryPoint = "WinUsb_Initialize",
         SetLastError = true
     )]
+    [return: MarshalAs(UnmanagedType.Bool)]
     static extern bool WinUsb_Initialize(
         nint DeviceHandle,
         out nint InterfaceHandle
@@ -1265,6 +1266,7 @@ class Program
 
     [DllImport(
         "kernel32.dll",
+        EntryPoint = "CreateFileW",
         SetLastError = true,
         CharSet = CharSet.Unicode
     )]

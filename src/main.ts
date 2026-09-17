@@ -80,7 +80,6 @@ console.log('ZZZ CONTROLLER VERSION: ROTATION TEST 2')
   </main>
 `
 
-const status = document.querySelector<HTMLDivElement>('#status')!
 
 async function send(data: string) {
   console.log('TRY SEND:', data)
@@ -93,19 +92,7 @@ async function send(data: string) {
   }
 }
 
-async function connectUSB() {
-  try {
-    const result = await UsbController.connect()
 
-    if (result.connected) {
-      status.textContent = 'USB CONNECTED'
-      console.log('USB CONNECTED:', result)
-    }
-  } catch (error) {
-    status.textContent = 'USB DISCONNECTED'
-    console.error('USB CONNECT ERROR:', error)
-  }
-}
 
 function sendButton(button: string, state: 'down' | 'up') {
   send(`B|${button}|${state}`)
@@ -298,4 +285,3 @@ setupTrigger('RT')
 setupStick('left-stick')
 setupStick('right-stick')
 
-connectUSB()
