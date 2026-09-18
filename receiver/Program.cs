@@ -51,6 +51,28 @@ class Program
     static void Main()
     {
         using var VirtualController = new VirtualController();
+
+        Console.WriteLine();
+        Console.WriteLine("Mengecek apakah hp sudah berada dalam mode aoa...");
+        
+
+        string? existingAOAPath = FindInterfacePath(
+            AOA_TARGET,
+            "AOA MI_00"
+            );
+
+        if(!string.IsNullOrEmpty(existingAOAPath))
+        {
+            Console.WriteLine();
+            Console.WriteLine("HP sudah berada dalam mode AOA");
+            Console.WriteLine($"AOA interface ditemukan:");
+            Console.WriteLine(existingAOAPath);
+
+            ConnectExistingAOA(
+                existingAOAPath, VirtualController
+            );
+            return;
+        }
         
         Console.WriteLine("ZZZ Controller - AOA Receiver");
         Console.WriteLine("=============================");
@@ -136,6 +158,8 @@ class Program
         Console.WriteLine(
             "WinUSB normal berhasil diinisialisasi."
         );
+
+        
 
         // --------------------------------------------------------
         // STEP 4
@@ -522,6 +546,192 @@ class Program
         CloseHandle(aoaDeviceHandle);
     }
 
+    static void ConnectExistingAOA(
+    string aoaDevicePath,
+    VirtualController virtualController)
+{
+    // ========================================================
+    // Buka AOA MI_00
+    // ========================================================
+
+    Console.WriteLine();
+    Console.WriteLine("Membuka AOA MI_00...");
+
+    nint aoaDeviceHandle = CreateFile(
+        aoaDevicePath,
+        GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        IntPtr.Zero,
+        OPEN_EXISTING,
+        FILE_FLAG_OVERLAPPED,
+        IntPtr.Zero
+    );
+
+    if (aoaDeviceHandle == INVALID_HANDLE_VALUE)
+    {
+        Console.WriteLine(
+            $"CreateFile AOA gagal: {Marshal.GetLastWin32Error()}"
+        );
+
+        return;
+    }
+
+    Console.WriteLine(
+        "AOA MI_00 berhasil dibuka."
+    );
+
+    // ========================================================
+    // WinUSB
+    // ========================================================
+
+    if (!WinUsb_Initialize(
+            aoaDeviceHandle,
+            out nint aoaInterfaceHandle))
+    {
+        Console.WriteLine(
+            $"WinUsb_Initialize AOA gagal: " +
+            $"{Marshal.GetLastWin32Error()}"
+        );
+
+        CloseHandle(aoaDeviceHandle);
+        return;
+    }
+
+    Console.WriteLine(
+        "WinUSB AOA berhasil diinisialisasi."
+    );
+
+    // ========================================================
+    // Query interface
+    // ========================================================
+
+    if (!WinUsb_QueryInterfaceSettings(
+            aoaInterfaceHandle,
+            0,
+            out USB_INTERFACE_DESCRIPTOR descriptor))
+    {
+        Console.WriteLine(
+            $"Query interface gagal: " +
+            $"{Marshal.GetLastWin32Error()}"
+        );
+
+        WinUsb_Free(aoaInterfaceHandle);
+        CloseHandle(aoaDeviceHandle);
+
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("=============================");
+    Console.WriteLine("USB INTERFACE");
+    Console.WriteLine("=============================");
+
+    Console.WriteLine(
+        $"Interface Number : {descriptor.bInterfaceNumber}"
+    );
+
+    Console.WriteLine(
+        $"Alternate Setting: {descriptor.bAlternateSetting}"
+    );
+
+    Console.WriteLine(
+        $"Endpoint Count   : {descriptor.bNumEndpoints}"
+    );
+
+    // ========================================================
+    // Cari bulk endpoint
+    // ========================================================
+
+    byte bulkIn = 0;
+    byte bulkOut = 0;
+
+    Console.WriteLine();
+
+    for (byte i = 0; i < descriptor.bNumEndpoints; i++)
+    {
+        if (!WinUsb_QueryPipe(
+                aoaInterfaceHandle,
+                0,
+                i,
+                out WINUSB_PIPE_INFORMATION pipe))
+        {
+            Console.WriteLine(
+                $"QueryPipe gagal: {Marshal.GetLastWin32Error()}"
+            );
+
+            continue;
+        }
+
+        Console.WriteLine(
+            $"Endpoint: 0x{pipe.PipeId:X2} | " +
+            $"Type: {pipe.PipeType} | " +
+            $"MaxPacket: {pipe.MaximumPacketSize}"
+        );
+
+        // UsbdPipeTypeBulk = 2
+        if (pipe.PipeType == 2)
+        {
+            if ((pipe.PipeId & 0x80) != 0)
+            {
+                bulkIn = pipe.PipeId;
+            }
+            else
+            {
+                bulkOut = pipe.PipeId;
+            }
+        }
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("=============================");
+    Console.WriteLine("ENDPOINT");
+    Console.WriteLine("=============================");
+
+    Console.WriteLine(
+        $"Bulk IN : 0x{bulkIn:X2}"
+    );
+
+    Console.WriteLine(
+        $"Bulk OUT: 0x{bulkOut:X2}"
+    );
+
+    if (bulkIn == 0 || bulkOut == 0)
+    {
+        Console.WriteLine();
+        Console.WriteLine(
+            "Bulk endpoint tidak lengkap."
+        );
+
+        WinUsb_Free(aoaInterfaceHandle);
+        CloseHandle(aoaDeviceHandle);
+
+        return;
+    }
+
+    // ========================================================
+    // DATA CHANNEL
+    // ========================================================
+
+    Console.WriteLine();
+    Console.WriteLine("=============================");
+    Console.WriteLine("AOA DATA CHANNEL READY.");
+    Console.WriteLine("Menunggu data dari HP...");
+    Console.WriteLine("=============================");
+    Console.WriteLine();
+
+    ReadLoop(
+        aoaInterfaceHandle,
+        bulkIn,
+        virtualController
+    );
+
+    // ========================================================
+    // CLEANUP
+    // ========================================================
+
+    WinUsb_Free(aoaInterfaceHandle);
+    CloseHandle(aoaDeviceHandle);
+}
     // ============================================================
     // AOA GET PROTOCOL
     // ============================================================

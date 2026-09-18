@@ -1,0 +1,15 @@
+D:\gabut\controller\zzz-controller\ZZZController\bin\Debug\net9.0-windows\ZZZController.exe
+D:\gabut\controller\zzz-controller\ZZZController\bin\Debug\net9.0-windows\ZZZController.deps.json
+D:\gabut\controller\zzz-controller\ZZZController\bin\Debug\net9.0-windows\ZZZController.runtimeconfig.json
+D:\gabut\controller\zzz-controller\ZZZController\bin\Debug\net9.0-windows\ZZZController.dll
+D:\gabut\controller\zzz-controller\ZZZController\bin\Debug\net9.0-windows\ZZZController.pdb
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.GeneratedMSBuildEditorConfig.editorconfig
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.AssemblyInfoInputs.cache
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.AssemblyInfo.cs
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.csproj.CoreCompileInputs.cache
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.sourcelink.json
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.dll
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\refint\ZZZController.dll
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.pdb
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ZZZController.genruntimeconfig.cache
+D:\gabut\controller\zzz-controller\ZZZController\obj\Debug\net9.0-windows\ref\ZZZController.dll
