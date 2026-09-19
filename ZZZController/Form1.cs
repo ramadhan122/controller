@@ -182,7 +182,8 @@ public partial class Form1 : Form
                     FileName = receiverPath,
                     WorkingDirectory = Path.GetDirectoryName(receiverPath)!,
                     UseShellExecute = false,
-                    CreateNoWindow = false
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
 
