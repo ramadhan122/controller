@@ -1,0 +1,109 @@
+
+==========================
+VIRTUAL XBOX CONTROLLER
+==========================
+Membuat ViGEmclient...
+ViGEmclient berhasil dibuat
+Membuat Xbox 360 controller...
+Xbox 360 controller berhasil dibuat
+Connecting...
+Virtual Xbox 360 Controller Connected
+
+
+Mengecek apakah hp sudah berada dalam mode aoa...
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+ZZZ Controller - AOA Receiver
+=============================
+
+Mencari POCO USB / ADB interface...
+Mencari Normal USB / ADB...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+
+Normal USB interface ditemukan:
+\\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+
+Normal USB interface berhasil dibuka.
+WinUSB normal berhasil diinisialisasi.
+
+AOA protocol version: 2
+
+Mengirim AOA accessory information...
+String 0: Ramadhan
+String 1: ZZZ Controller
+String 2: USB Xbox-style controller
+String 3: 1.0
+String 4: https://example.com
+String 5: ZZC-001
+Accessory information berhasil dikirim.
+
+Memulai Android Open Accessory mode...
+
+START_ACCESSORY berhasil dikirim.
+Menunggu USB reconnect...
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 1/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 2/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 3/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 4/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 5/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 6/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 7/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 8/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 9/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 10/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 11/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 12/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 13/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 14/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 15/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 16/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 17/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 18/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 19/20
+Mencari AOA MI_00...
+WinUSB Interface 0: \\?\usb#vid_18d1&pid_4ee7#5bba47460920#{dee824ef-729b-4a0e-9c14-b7117d33a817}
+Menunggu AOA... 20/20
+
+AOA MI_00 interface tidak ditemukan setelah START_ACCESSORY.
+
+Cek kembali apakah HP sudah melakukan USB re-enumeration.
+
+Virtual Xbox Controller disconnected.

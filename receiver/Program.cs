@@ -52,6 +52,18 @@ class Program
     {
         using var VirtualController = new VirtualController();
 
+        while (true)
+        {
+            RunConnectionCycle(VirtualController);
+
+            Console.WriteLine();
+            Console.WriteLine("Menunggu koneksi HP berikutnya...");
+            Thread.Sleep(1000);
+        }
+    }
+
+    static void RunConnectionCycle(VirtualController VirtualController)
+    {
         Console.WriteLine();
         Console.WriteLine("Mengecek apakah hp sudah berada dalam mode aoa...");
         
@@ -324,37 +336,26 @@ class Program
 
         string? aoaDevicePath = null;
 
-        for (int attempt = 0; attempt < 20; attempt++)
+        while (aoaDevicePath == null)
         {
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
             aoaDevicePath = FindInterfacePath(
                 AOA_TARGET,
                 "AOA MI_00"
             );
 
-            if (aoaDevicePath != null)
-                break;
-
-            Console.WriteLine(
-                $"Menunggu AOA... {attempt + 1}/20"
-            );
+            if (aoaDevicePath == null)
+            {
+                Console.WriteLine(
+                    "AOA belum ditemukan, masih menunggu..."
+                );
+            }
         }
 
-        if (aoaDevicePath == null)
-        {
-            Console.WriteLine();
-            Console.WriteLine(
-                "AOA MI_00 interface tidak ditemukan setelah START_ACCESSORY."
-            );
-
-            Console.WriteLine();
-            Console.WriteLine(
-                "Cek kembali apakah HP sudah melakukan USB re-enumeration."
-            );
-
-            return;
-        }
+        Console.WriteLine();
+        Console.WriteLine("AOA interface ditemukan:");
+        Console.WriteLine(aoaDevicePath);
 
         // --------------------------------------------------------
         // STEP 8
@@ -913,7 +914,11 @@ class Program
                     $"WinUsb_ReadPipe gagal: {error}"
                 );
 
-                break;
+                Console.WriteLine(
+                    "Koneksi AOA terputus."
+                );
+
+                return;
             }
 
             if (transferred == 0)
