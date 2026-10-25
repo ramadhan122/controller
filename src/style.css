@@ -222,51 +222,115 @@ button {
 }
 
 @media (orientation: landscape) {
+  /* =========================
+     LANDSCAPE HEADER
+     ========================= */
+
+  .controller {
+    position: relative;
+  }
+
   .top {
-    height: 38px;
-    padding: 0 14px;
-    font-size: 11px;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    z-index: 10;
+    pointer-events: none;
+    display: block;
   }
 
-  .menu {
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
+  /* Judul tepat di tengah layar */
+  .top span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15px;
+    letter-spacing: 2px;
+    white-space: nowrap;
   }
 
-  .gamepad {
-    padding: 5px 14px 8px;
+  /* Menu di sisi kiri tengah */
+  .top .menu:first-child {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    font-size: 21px;
+    border-radius: 12px;
+    pointer-events: auto;
   }
 
-  .shoulders {
-    gap: 5px;
-  }
-
-  .shoulders button {
-    height: 36px;
-    min-width: 50px;
-    border-radius: 9px;
-  }
-
-  .shoulders .trigger {
-    height: 42px;
-  }
-
-  .center {
-    gap: 5px;
-  }
-
-  .center button {
-    min-width: 55px;
-    font-size: 9px;
+  /* Settings di sisi kanan tengah */
+  .top .menu:last-child {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    font-size: 21px;
+    border-radius: 12px;
+    pointer-events: auto;
   }
 
   /* =========================
-     XBOX LANDSCAPE LAYOUT
+     AREA CONTROLLER
+     ========================= */
+
+  .gamepad {
+    flex: 1;
+    min-height: 0;
+    padding: 7px 14px 8px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* LB, LT, BACK, START, RT, RB */
+  .shoulders {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+    flex-shrink: 0;
+  }
+
+  .shoulders button {
+    height: 43px;
+    min-width: 58px;
+    padding: 0 8px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .shoulders .trigger {
+    height: 48px;
+    min-width: 58px;
+  }
+
+  .center {
+    display: flex;
+    gap: 7px;
+  }
+
+  .center button {
+    height: 43px;
+    min-width: 65px;
+    font-size: 11px;
+  }
+
+  /* =========================
+     POSISI TOMBOL UTAMA
+     Posisi relatif tetap sama
      ========================= */
 
   .middle {
     flex: 1;
+    min-height: 0;
     display: grid;
 
     grid-template-columns: 1fr 1fr;
@@ -278,41 +342,44 @@ button {
 
     align-items: center;
     justify-items: center;
-
-    min-height: 0;
     gap: 0;
   }
 
-  /* LEFT STICK - kiri atas */
   .middle > .stick-area:nth-child(1) {
     grid-area: leftstick;
   }
 
-  /* RIGHT STICK - kanan bawah */
   .middle > .stick-area:nth-child(2) {
     grid-area: rightstick;
   }
 
-  /* DPAD - kiri bawah */
   .middle > .dpad {
     grid-area: dpad;
   }
 
-  /* ABXY - kanan atas */
   .middle > .face-buttons {
     grid-area: face;
   }
 
+  /* =========================
+     ANALOG LS DAN RS
+     ========================= */
+
   .stick-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 3px;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .stick {
-    width: min(24vw, 105px);
-    height: min(24vw, 105px);
-    min-width: 75px;
-    min-height: 75px;
+    width: min(27vw, 120px);
+    height: min(27vw, 120px);
+    min-width: 90px;
+    min-height: 90px;
+    max-width: 120px;
+    max-height: 120px;
   }
 
   /* =========================
@@ -320,71 +387,81 @@ button {
      ========================= */
 
   .dpad {
-    width: 90px;
-    height: 90px;
+    position: relative;
+    width: 108px;
+    height: 108px;
   }
 
   .dpad button {
-    width: 30px;
-    height: 30px;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+    border-radius: 8px;
   }
 
   .dpad button:nth-child(1) {
     top: 0;
-    left: 30px;
+    left: 36px;
   }
 
   .dpad button:nth-child(2) {
-    top: 30px;
+    top: 36px;
     left: 0;
   }
 
   .dpad button:nth-child(3) {
-    top: 30px;
+    top: 36px;
     right: 0;
   }
 
   .dpad button:nth-child(4) {
     bottom: 0;
-    left: 30px;
+    left: 36px;
   }
 
   /* =========================
-     ABXY
+     TOMBOL ABXY
      ========================= */
 
   .face-buttons {
-    width: 100px;
-    height: 100px;
+    position: relative;
+    width: 120px;
+    height: 120px;
   }
 
   .face-buttons button {
-    width: 36px;
-    height: 36px;
+    position: absolute;
+    width: 43px;
+    height: 43px;
+    font-size: 16px;
+    border-radius: 50%;
   }
 
   .face-buttons button:nth-child(1) {
     top: 0;
-    left: 32px;
+    left: 38px;
   }
 
   .face-buttons button:nth-child(2) {
-    top: 32px;
+    top: 38px;
     left: 0;
   }
 
   .face-buttons button:nth-child(3) {
-    top: 32px;
+    top: 38px;
     right: 0;
   }
 
   .face-buttons button:nth-child(4) {
     bottom: 0;
-    left: 32px;
+    left: 38px;
   }
 
+  /* Status koneksi */
   #status {
     height: 20px;
-    font-size: 8px;
+    flex-shrink: 0;
+    font-size: 9px;
   }
 }

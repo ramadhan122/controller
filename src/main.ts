@@ -19,8 +19,8 @@ const UsbController = registerPlugin<UsbControllerPlugin>('UsbController')
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
-app.innerHTML = `
 console.log('ZZZ CONTROLLER VERSION: ROTATION TEST 2')
+app.innerHTML = `
   <main class="controller">
     <div class="top">
       <button class="menu">☰</button>
